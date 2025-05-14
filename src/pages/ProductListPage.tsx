@@ -1,7 +1,7 @@
-// src/pages/ProductListPage.tsx
-import React from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import api from "../api/axios";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductListPage() {
   const {
@@ -21,6 +21,17 @@ export default function ProductListPage() {
       return lastPage.length === 10 ? allPages.length * 10 : undefined;
     },
   });
+
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  // cache product details when mouse enter
+  const handleMouseEnter = (id: number) => {
+    queryClient.prefetchQuery({
+      queryKey: ["product", id],
+      queryFn: () => api.get(`/products/${id}`).then((res) => res.data),
+    });
+  };
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
@@ -43,7 +54,10 @@ export default function ProductListPage() {
                 border: "1px solid #ccc",
                 padding: "1rem",
                 borderRadius: "8px",
+                cursor: "pointer",
               }}
+              onMouseEnter={() => handleMouseEnter(product.id)}
+              onClick={() => navigate(`/product/${product.id}`)}
             >
               <img
                 src={product.images?.[0]}

@@ -15,8 +15,10 @@ export default function LoginPage() {
         password,
       }),
     onSuccess: (res) => {
+      console.log("login res", res);
       const token = res.data.access_token;
       localStorage.setItem("accessToken", token);
+      console.log("loginMutation", loginMutation);
       navigate("/products");
     },
     onError: (error: any) => {
@@ -56,10 +58,10 @@ export default function LoginPage() {
         </div>
         <button
           type="submit"
-          //   disabled={loginMutation.isLoading}
+          disabled={loginMutation.isPending}
           style={{ width: "100%", padding: "0.5rem" }}
         >
-          {/* {loginMutation.isLoading ? "Login..." : "Login"} */}
+          {loginMutation.isPending ? "Login..." : "Login"}
         </button>
       </form>
     </div>
