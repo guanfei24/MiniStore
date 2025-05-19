@@ -5,14 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 export default function ProductListPage() {
-
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const { data: categories = []} = useQuery({
+  const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: () => api.get("/categories").then((res) => res.data),
     staleTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
   });
+
   // Cache product details when mouse enter
   const handleMouseEnter = (id: number) => {
     queryClient.prefetchQuery({
@@ -22,30 +22,29 @@ export default function ProductListPage() {
   };
 
   const {
-  data,
-  fetchNextPage,
-  hasNextPage,
-  isFetchingNextPage,
-  isLoading,
-  error,
-} = useInfiniteQuery({
-  queryKey: ['products', debouncedSearch, selectedCategory],
-  queryFn: ({ pageParam = 0 }) =>
-    api
-      .get('/products', {
-        params: {
-          offset: pageParam,
-          limit: 10,
-          ...(debouncedSearch ? { title: debouncedSearch } : {}),
-          ...(selectedCategory ? { categorySlug: selectedCategory } : {}),
-        },
-      })
-      .then((res) => res.data),
-  initialPageParam: 0,
-  getNextPageParam: (lastPage, allPages) =>
-    lastPage.length === 10 ? allPages.length * 10 : undefined,
-})
-
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ["products", debouncedSearch, selectedCategory],
+    queryFn: ({ pageParam = 0 }) =>
+      api
+        .get("/products", {
+          params: {
+            offset: pageParam,
+            limit: 10,
+            ...(debouncedSearch ? { title: debouncedSearch } : {}),
+            ...(selectedCategory ? { categorySlug: selectedCategory } : {}),
+          },
+        })
+        .then((res) => res.data),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === 10 ? allPages.length * 10 : undefined,
+  });
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -76,15 +75,17 @@ export default function ProductListPage() {
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{  marginLeft: "1rem" }}
-        ><option key="" value="">All Category</option>
-          {categories?.map((cat: string) => (
-          <option key={cat.slug} value={cat.slug}>
-            {cat.name}
+          style={{ marginLeft: "1rem" }}
+        >
+          <option key="" value="">
+            All Category
           </option>
-        ))}
+          {categories?.map((cat: string) => (
+            <option key={cat.slug} value={cat.slug}>
+              {cat.name}
+            </option>
+          ))}
         </select>
-        
       </div>
       <div
         style={{

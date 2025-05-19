@@ -1,9 +1,15 @@
 // src/App.tsx
-import { useIsFetching } from "@tanstack/react-query";
+import { useIsFetching, useQuery } from "@tanstack/react-query";
 import AppRoutes from "./routes/AppRoutes";
+import api from "./api/axios";
 
 function App() {
   const isFetching = useIsFetching();
+
+  const { data: user, isLoading: isUserLoading } = useQuery({
+    queryKey: ["auth"],
+    queryFn: () => api.get("/auth/profile").then((res) => res.data),
+  });
 
   return (
     <>
@@ -20,7 +26,11 @@ function App() {
             zIndex: 9999,
           }}
         >
-          {isFetching ? "Loading...." : "Loading Complete"}
+          {isUserLoading ? (
+            <p>加载用户信息中...</p>
+          ) : user ? (
+            <div style={{ marginBottom: "1rem" }}>欢迎，{user.name} </div>
+          ) : null}
         </div>
       }
       <AppRoutes />
