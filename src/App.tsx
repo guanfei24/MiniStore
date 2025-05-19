@@ -26,11 +26,25 @@ function App() {
             zIndex: 9999,
           }}
         >
-          {isUserLoading ? (
-            <p>加载用户信息中...</p>
-          ) : user ? (
-            <div style={{ marginBottom: "1rem" }}>欢迎，{user.name} </div>
-          ) : null}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <img
+              src={user.avatar}
+              alt="avatar"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                marginRight: 8,
+              }}
+            />
+            <span>Welcome, {user.name}!</span>
+          </div>
         </div>
       }
       <AppRoutes />
