@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
@@ -7,6 +7,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState("john@mail.com");
   const [password, setPassword] = useState("changeme");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    console.log("token", token);
+
+    if (token) {
+      navigate("/products");
+    }
+  }, [navigate]);
 
   const loginMutation = useMutation({
     mutationFn: () =>

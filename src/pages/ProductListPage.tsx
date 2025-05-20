@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 export default function ProductListPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [search, setSearch] = useState("");
+
+  const queryClient = useQueryClient();
+  // Fetch categories
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: () => api.get("/categories").then((res) => res.data),
@@ -21,6 +25,7 @@ export default function ProductListPage() {
     });
   };
 
+  // Fetch products with infinite scroll
   const {
     data,
     fetchNextPage,
@@ -46,10 +51,6 @@ export default function ProductListPage() {
       lastPage.length === 10 ? allPages.length * 10 : undefined,
   });
 
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-
   // Debounce the search input
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -58,6 +59,22 @@ export default function ProductListPage() {
 
     return () => clearTimeout(handler);
   }, [search]);
+
+  const addToCart = (product) => {
+    queryClient.setQueryData(["cart"], (old: any[] = []) => {
+      const exists = old.find((item) => item.product.id === product.id);
+      if (exists) {
+        return old.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...old, { product, quantity: 1 }];
+    });
+
+    alert("Added 🎉");
+  };
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
@@ -106,15 +123,32 @@ export default function ProductListPage() {
                 cursor: "pointer",
               }}
               onMouseEnter={() => handleMouseEnter(product.id)}
-              onClick={() => navigate(`/product/${product.id}`)}
             >
               <img
                 src={product.images?.[0]}
                 alt={product.title}
                 style={{ width: "100%", height: "150px", objectFit: "cover" }}
+                onClick={() => window.open(`/products/${product.id}`, "_blank")}
               />
-              <h4>{product.title}</h4>
+              <h4
+                onClick={() => window.open(`/products/${product.id}`, "_blank")}
+              >
+                {product.title}
+              </h4>
               <p>${product.price}</p>
+              <button
+                onClick={() => addToCart(product)}
+                style={{
+                  marginTop: "1rem",
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#2ecc71",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 4,
+                }}
+              >
+                Add to Cart
+              </button>
             </div>
           ))
         )}
