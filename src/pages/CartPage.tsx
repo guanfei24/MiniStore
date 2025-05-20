@@ -79,35 +79,52 @@ export default function CartPage() {
               <li
                 key={item.product.id}
                 style={{
+                  display: "flex",
+                  alignItems: "center",
                   marginBottom: 12,
                   borderBottom: "1px solid #eee",
                   paddingBottom: 8,
                 }}
               >
-                <strong>{item.product.title}</strong>
-                <br />${item.product.price} ×{" "}
-                <button onClick={() => decreaseQuantity(item.product.id)}>
-                  −
-                </button>
-                {item.quantity}
-                <button onClick={() => increaseQuantity(item.product.id)}>
-                  ＋
-                </button>
-                <br />
-                Summary: ${(item.product.price * item.quantity).toFixed(2)}
-                <br />
-                <button
-                  onClick={() => removeFromCart(item.product.id)}
+                <img
+                  src={item.product.images?.[0]}
+                  alt={item.product.title}
                   style={{
-                    marginTop: 4,
-                    background: "none",
-                    color: "#e74c3c",
-                    border: "none",
-                    cursor: "pointer",
+                    width: 48,
+                    height: 48,
+                    objectFit: "cover",
+                    borderRadius: 4,
+                    marginRight: 12,
+                    flexShrink: 0,
                   }}
-                >
-                  ❌ Delete
-                </button>
+                />
+
+                <div style={{ flex: 1 }}>
+                  <strong>{item.product.title}</strong>
+                  <br />${item.product.price} ×{" "}
+                  <button onClick={() => decreaseQuantity(item.product.id)}>
+                    −
+                  </button>
+                  {item.quantity}
+                  <button onClick={() => increaseQuantity(item.product.id)}>
+                    ＋
+                  </button>
+                  <br />
+                  Summary: ${(item.product.price * item.quantity).toFixed(2)}
+                  <br />
+                  <button
+                    onClick={() => removeFromCart(item.product.id)}
+                    style={{
+                      marginTop: 4,
+                      background: "none",
+                      color: "#e74c3c",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                  >
+                    ❌ Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
